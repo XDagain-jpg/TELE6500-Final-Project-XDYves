@@ -130,8 +130,49 @@ to actionable maintenance insights while maintaining awareness of real-world
 constraints and tradeoffs.
 
 ---
+## Pipeline Summary — How the System Works
 
-## Project Structure
+This project implements a **two-layer, cluster-based regression pipeline** designed for
+multivariate time-series sensor data, with the goal of improving Remaining Useful Life (RUL)
+prediction under varying operating conditions.
+
+### Layer 1: Behavior Segmentation via Time-Series Similarity
+Engine trajectories are first analyzed based on their **temporal behavior patterns** rather
+than raw sensor values.
+
+- Feature-engineered sensor sequences are compared using **Dynamic Time Warping (DTW)**,
+  allowing alignment of degradation trends that evolve at different speeds
+- Engines with similar degradation dynamics are grouped into clusters
+- This step separates heterogeneous operating behaviors that a single global model
+  would struggle to capture
+
+**Purpose:**  
+Reduce variability caused by differing degradation rates and operating regimes.
+
+---
+
+### Layer 2: Cluster-Specific Weighted Regression
+Within each cluster, a dedicated regression model is trained to predict RUL.
+
+- Models are fit using **cluster-specific data**, improving local accuracy
+- Observations closer to end-of-life are given higher importance via **weighted regression**
+- This emphasizes late-stage degradation, which is most critical for maintenance decisions
+
+**Purpose:**  
+Improve prediction accuracy by learning localized degradation-to-failure relationships.
+
+---
+
+### Why This Works
+By combining:
+- Feature engineering to extract degradation signals
+- Time-series alignment to compare engines fairly
+- Clustering to handle heterogeneity
+- Weighted regression to prioritize critical lifecycle stages
+
+the pipeline balances **global structure** with **local specialization**, resulting in more
+robust RUL predictions across engines with diverse operating profiles.
+
 
 
 
